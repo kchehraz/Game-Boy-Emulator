@@ -25,4 +25,5 @@ public:
 	
 	BYTE GetFlagIE(); // Interrupt Enable
 	BYTE GetFlagIF(); // Interrupt Flag (request)
+    BYTE GetFlagLCDC(); // LCD Control
 };

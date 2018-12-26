@@ -10,7 +10,9 @@ public:
 	BOOL isHalted;
 	BOOL interruptsOn; // Interrupt Master Enable (IME)
 	int cycles;
-	BYTE pixels[144][160]; // 160x144
+	//BYTE pixels[144][160]; // 160x144
+    BYTE pixels[256][256]; // for debugging
+    BYTE tileset[1024][8][8];
 
 	Emulator();
 	~Emulator();
@@ -21,6 +23,7 @@ public:
 
 	void Update();
 	void UpdateGraphics();
+    void RenderTile(int row, int column);
     void HandleInterrupts();
 
 	// Helper functions

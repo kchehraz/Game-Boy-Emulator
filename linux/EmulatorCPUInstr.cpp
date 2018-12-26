@@ -9,16 +9,10 @@ BOOL Emulator::TestBit(BYTE value, int bit) {
 	return (value >> bit) & 1;
 }
 void Emulator::SetBit(BYTE & value, int bit) {
-    //printf("SET\nBit: %d\nValue before: %02x\n", bit, value);
 	value |= (1 << bit);
-    //printf("Value after: %02x\n", value);
-    //std::cin.get();
 }
 void Emulator::ResetBit(BYTE & value, int bit) {
-    //printf("RESET\nBit: %d\nValue before: %02x\n", bit, value);
 	value &= ~(1 << bit);
-    //printf("Value after: %02x\n", value);
-    //std::cin.get();
 }
 
 void Emulator::RotateRight(BYTE & value) { // rotate through carry
@@ -114,9 +108,16 @@ void Emulator::LD_nn_Rn(WORD & src) {
 ///////////////////////
 void Emulator::LD_HL_SP_n() { // **WARNING** Check how Carry flag is actually set if issues occur.
 	SIGNED_BYTE n = (SIGNED_BYTE)memory.ReadByte(cpu.PC); // interpret byte as signed byte
-	BOOL hc = ((cpu.SP & 0xF) + (n & 0xF)) > 0xF; // check for carry in lower nibble
-	BOOL c = ((cpu.SP & 0xFF) + n) > 0xFF;
-	cpu.HL = cpu.SP + n;
+    BOOL hc, c;
+    if (n >= 0) { // two cases for positive and negative (adding and subtracting)
+	    hc = ((cpu.SP & 0xF) + (n & 0xF)) > 0xF; // check for carry in lower nibble
+	    c = ((cpu.SP & 0xFF) + n) > 0xFF;
+    }
+    else {
+        hc = ((cpu.SP+n) & 0xF) <= (cpu.SP & 0xF);
+        c = ((cpu.SP+n) & 0xFF) <= (cpu.SP & 0xFF);
+    }
+    cpu.HL = cpu.SP + n;
 	cpu.PC += 1;
 
 	cpu.SetFlags(0, 0, hc, c);
@@ -967,8 +968,6 @@ void Emulator::RES_b_r() {
 	int reg = op % 8; // A = 7, B = 0, C = 1, D = 2, etc...
 	int bit = (op - 0x80) / 8; // bits 0 - 7
 
-    printf("%02X\n", op);
-    std::cin.get();
 	switch (reg) {
 		case 0x0:
 		{

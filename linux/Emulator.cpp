@@ -28,15 +28,66 @@ void Emulator::Update() {
 
         BYTE opcode = FetchOpcode();
         ExecuteOpcode(opcode);
-        // UpdateGraphics();
         cyclesThisUpdate += 8;
         cycles += cyclesThisUpdate;
     }
+    UpdateGraphics();
     // RenderScreen();
 }
 
 void Emulator::UpdateGraphics() {
+    WORD tileAddr = 0x8000;
+    WORD mapAddr = 0x9800;
+    int sigd = 0;
+    if (TestBit(memory.GetFlagLCDC(), 4) == 0) {
+        tileAddr = 0x9000;
+        sigd = 1;
+    }
+    if (TestBit(memory.GetFlagLCDC(), 3) == 1) {
+        mapAddr = 0x9C00;
+    }
 
+    /*for (int i = 0; i < 1024; i++) { // iterate through map of tiles
+        int tileIndex = memory.mem[mapAddr+i]; // get index of tile we want
+        if (sigd) tileIndex = (SIGNED_BYTE)tileIndex; // convert to signed for other mode
+
+        for (int j = 0; j < 8; j++) {
+            for (int k = 0; k < 8; k++) {
+                tileset[i][j][k] = TestBit(tileAddr+(tileIndex*16)+(2*j), 7-k) | (TestBit(tileAddr+(tileIndex*16)+(2*j)+1, 7-k) << 1);
+            }
+        }
+    }*/
+
+    for (int i = 0; i < 32; i++) {
+        for (int j = 0; j < 32; j++) {
+            RenderTile(i, j);
+        }
+    }
+}
+
+void Emulator::RenderTile(int row, int column) {
+    int tileBaseAddr = 0x8000;
+    bool sigd = 0;
+    if (TestBit(memory.GetFlagLCDC(), 4) == 0) {
+        tileBaseAddr = 0x9000;
+        sigd = 1;
+    }
+    int mapBaseAddr = 0x9800;
+    if (TestBit(memory.GetFlagLCDC(), 3) == 1) {
+        mapBaseAddr = 0x9C00;
+    }
+    int mapIndex = (row*32) + column;
+    int tileIndex = memory.mem[mapBaseAddr+mapIndex];
+    if (sigd) tileIndex = (SIGNED_BYTE)tileIndex;
+    int tileAddr = tileBaseAddr + (tileIndex*16);
+    for (int i = row*8; i < ((row*8) + 8); i++) {
+        for (int j = column*8; j < ((column*8) + 8); j++) {
+            BYTE data1 = memory.mem[tileAddr];
+            BYTE data2 = memory.mem[tileAddr+1];
+            pixels[i][j] = TestBit(data1, 7-(j%8)) | (TestBit(data2, 7-(j%8)) << 1);
+        }
+        tileAddr += 2;
+    }
 }
 
 void Emulator::HandleInterrupts() {
@@ -66,7 +117,7 @@ BYTE Emulator::FetchOpcode() {
 
 // PC is on the first byte after the opcode
 int Emulator::ExecuteOpcode(BYTE opcode) {
-    if (memory.mem[0xFF02] == 0x81) {
+    /*if (memory.mem[0xFF02] == 0x81) {
         cout << hex << (int)memory.mem[0xFF01] << endl;
         cout << "TEST COMPLETE\n\n\n\n\n\n\n\n\n\n\n\n" << endl;
         printf("Count: %d\n", count);
@@ -76,12 +127,12 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         //cin.get();
     }
     count++; // increment op count
-    printf("PC: 0x%04X\n", cpu.PC);
-    printf("Opcode: %02X\n", opcode);
-    printf("AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X\n", cpu.AF, cpu.BC, cpu.DE, cpu.HL);
+    //printf("PC: 0x%04X\n", cpu.PC);
+    //printf("Opcode: %02X\n", opcode);
+    //printf("AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X\n", cpu.AF, cpu.BC, cpu.DE, cpu.HL);
     //std::cout << "Press enter to continue...";
     //std::cin.get();
-
+    */
 
     switch (opcode) {
         // Order in terms of functions rather than opcodes for better readability
@@ -176,9 +227,7 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x2A: { LD(cpu.A, memory.mem[cpu.HL++]); break; }
         case 0x22: { LD(memory.mem[cpu.HL++], cpu.A); break; }
         case 0xE0: { LD(memory.mem[0xFF00+FetchOpcode()], cpu.A); break; }
-        case 0xF0: { LD(cpu.A, memory.mem[0xFF00 + FetchOpcode()]); 
-                   printf("[$FF00+u8] = %02X", memory.mem[0xFF00+memory.mem[cpu.PC-1]]); 
-                   break; }
+        case 0xF0: { LD(cpu.A, memory.mem[0xFF00 + FetchOpcode()]); break; }
 
                    // 16-Bit Loads
         case 0x01: { LD_Rd_nn(cpu.BC); break; }
@@ -192,7 +241,7 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0xC5: { PUSH(cpu.BC); break; }
         case 0xD5: { PUSH(cpu.DE); break; }
         case 0xE5: { PUSH(cpu.HL); break; }
-        case 0xF1: { POP(cpu.AF); break; }
+        case 0xF1: { POP(cpu.AF); cpu.F ^= (cpu.F & 0x0F); break; }
         case 0xC1: { POP(cpu.BC); break; }
         case 0xD1: { POP(cpu.DE); break; }
         case 0xE1: { POP(cpu.HL); break; }

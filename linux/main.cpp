@@ -54,35 +54,27 @@ int main(int argc, char *argv[]) {
 	fclose(rom);
 	// END OF DEBUGGING PART
 
-	uint32_t pixels[144][160];
-	int slope = (0xFF / 160);
-	for (int i = 0; i < 144; i++) {
-		for (int j = 0; j < 160; j++) {
-			pixels[i][j] = (slope * j) | ((slope << 8) * j) | ((slope << 16) * j) | 0xFF000000;
-		}
-	}
+	//uint32_t pixels[144][160];
+	uint32_t pixels[256][256];
 
 	BOOL quit = false;
 	while (!quit) {
-		//printf("PC: %04x\n", emu.cpu.PC);
-		if (emu.memory.mem[0xFF02] == 0x81) {
-            cout << "ASD" << endl;
-            printf("%c\n", emu.memory.mem[0xFF01]);
-            system("pause");
-        }
-        //cout << "MAIN LOOP" << endl;
 		emu.Update();
 
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			/* handle your event here */
 
-		   //User requests quit
-			if (event.type == SDL_QUIT)
+		   // User requests quit
+		    if (event.type == SDL_QUIT)
 				quit = true;
 		}
-		
-		SDL_UpdateTexture(screenTexture, NULL, pixels, 160*sizeof(uint32_t)); // update screen texture
+		for (int i = 0; i < 256; i++) {
+            for (int j = 0; j < 256; j++) {
+                pixels[i][j] = 0xFF000000 | (0x00FFFFFF - emu.pixels[i][j] * 0x00AAAAAA);
+            }
+        }
+		SDL_UpdateTexture(screenTexture, NULL, pixels, 256*sizeof(uint32_t)); // update screen texture
 		SDL_RenderCopy(renderer, screenTexture, NULL, NULL); // fill screen with texture
 		SDL_RenderPresent(renderer); // render to screen
 	}
