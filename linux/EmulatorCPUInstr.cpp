@@ -293,13 +293,13 @@ void Emulator::DEC(BYTE & src) {
 
 // 16-Bit Arithmetic
 void Emulator::ADD_HL_Rn(WORD src) {
-	WORD HL = cpu.HL >> 8; // shift right to make it easier to manipulate
-	cpu.HL += src;
+	WORD HL = cpu.HL; // shift right to make it easier to manipulate
+    WORD temp = src;
+    cpu.HL += src;
 
-	BOOL n = 0;
-	BOOL h = ((src & 0xF) + (HL & 0xF)) > 0xF;
-	BOOL c = (src + HL) > 0xFF;
-	cpu.SetFlags(cpu.GetFlagZ(), n, h, c);
+	BOOL h = ((temp & 0xFFF) + (HL & 0xFFF)) > 0xFFF;
+	BOOL c = (temp + HL) > 0xFFFF;
+	cpu.SetFlags(cpu.GetFlagZ(), 0, h, c);
 }
 void Emulator::ADD_SP_n() {
 	SIGNED_BYTE n = (SIGNED_BYTE)memory.ReadByte(cpu.PC);
@@ -1163,7 +1163,8 @@ void Emulator::CALL_cc_nn() {
 
 // Restarts
 void Emulator::RST_n() {
-	cpu.PC = memory.ReadByte(cpu.PC - 1) - 0xC7; // opcode gives addr to jump to
+    StackPush(cpu.PC); // push address of next instruction
+	cpu.PC = memory.ReadByte(cpu.PC-1) - 0xC7; // opcode gives addr to jump to
 }
 
 // Returns
