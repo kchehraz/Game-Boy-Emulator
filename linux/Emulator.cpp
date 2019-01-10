@@ -36,36 +36,35 @@ void Emulator::Update() {
 }
 
 void Emulator::UpdateGraphics() {
-    WORD tileAddr = 0x8000;
-    WORD mapAddr = 0x9800;
-    int sigd = 0;
-    if (TestBit(memory.GetFlagLCDC(), 4) == 0) {
-        tileAddr = 0x9000;
-        sigd = 1;
-    }
-    if (TestBit(memory.GetFlagLCDC(), 3) == 1) {
-        mapAddr = 0x9C00;
-    }
-
-    /*for (int i = 0; i < 1024; i++) { // iterate through map of tiles
-        int tileIndex = memory.mem[mapAddr+i]; // get index of tile we want
-        if (sigd) tileIndex = (SIGNED_BYTE)tileIndex; // convert to signed for other mode
-
-        for (int j = 0; j < 8; j++) {
-            for (int k = 0; k < 8; k++) {
-                tileset[i][j][k] = TestBit(tileAddr+(tileIndex*16)+(2*j), 7-k) | (TestBit(tileAddr+(tileIndex*16)+(2*j)+1, 7-k) << 1);
+    // Draw background tiles if enabled
+    if (TestBit(memory.GetFlagLCDC(), 0)) {
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 32; j++) {
+                RenderTile(i, j, TestBit(memory.GetFlagLCDC(), 3)); // bg tile map selection as arg
             }
         }
-    }*/
+    }
+    
+    // Draw window if enabled
+    if (TestBit(memory.GetFlagLCDC(), 5)) {
+        cout << "window" << endl;
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 32; j++) {
+                RenderTile(i, j, TestBit(memory.GetFlagLCDC(), 6)); // window tile map selection as arg
+            }
+        }
+    }
 
-    for (int i = 0; i < 32; i++) {
-        for (int j = 0; j < 32; j++) {
-            RenderTile(i, j);
+    // Draw sprites if enabled
+    if (TestBit(memory.GetFlagLCDC(), 1)) {
+        cout << "sprites" << endl;
+        for (int i = 0; i < 40; i++) {
+            RenderSpriteTile(i);
         }
     }
 }
 
-void Emulator::RenderTile(int row, int column) {
+void Emulator::RenderTile(int row, int column, int mapBank) {
     int tileBaseAddr = 0x8000;
     bool sigd = 0;
     if (TestBit(memory.GetFlagLCDC(), 4) == 0) {
@@ -73,7 +72,7 @@ void Emulator::RenderTile(int row, int column) {
         sigd = 1;
     }
     int mapBaseAddr = 0x9800;
-    if (TestBit(memory.GetFlagLCDC(), 3) == 1) {
+    if (mapBank == 1) {
         mapBaseAddr = 0x9C00;
     }
     int mapIndex = (row*32) + column;
@@ -82,11 +81,27 @@ void Emulator::RenderTile(int row, int column) {
     int tileAddr = tileBaseAddr + (tileIndex*16);
     for (int i = row*8; i < ((row*8) + 8); i++) {
         for (int j = column*8; j < ((column*8) + 8); j++) {
-            BYTE data1 = memory.mem[tileAddr];
-            BYTE data2 = memory.mem[tileAddr+1];
-            pixels[i][j] = TestBit(data1, 7-(j%8)) | (TestBit(data2, 7-(j%8)) << 1);
+            BYTE byte1 = memory.mem[tileAddr];
+            BYTE byte2 = memory.mem[tileAddr+1];
+            pixels[i][j] = TestBit(byte1, 7-(j%8)) | (TestBit(byte2, 7-(j%8)) << 1);
         }
         tileAddr += 2;
+    }
+}
+
+void Emulator::RenderSpriteTile(int index) {
+    int addr = 0xFE00 + (index*4); // 4 bytes each sprite
+    int y = memory.ReadByte(addr);
+    int x = memory.ReadByte(addr+1);
+    int tileIndex = memory.ReadByte(addr+2);
+    int flags = memory.ReadByte(addr+3);
+
+    for (int i = y; i < y+8; i++) {
+        for (int j = x; j < x+8; j++) {
+            BYTE byte1 = memory.mem[0x8000+tileIndex*16];
+            BYTE byte2 = memory.mem[0x8000+tileIndex*16+1];
+            pixels[i][j] = TestBit(byte1, 7-(j%8)) | (TestBit(byte2, 7-(j%8)) << 1);
+        }
     }
 }
 

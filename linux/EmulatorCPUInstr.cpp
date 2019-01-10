@@ -379,15 +379,40 @@ void Emulator::SWAP() {
 // ** WARNING ** Possible bug with this?
 void Emulator::DAA() {
 	BOOL c = 0;
-	if (cpu.A > 0x09) {
+	/*if (cpu.A > 0x09) {
 		cpu.A += 0x06; // turns decimal value into hexadecimal digits
 	}
 	if ((cpu.A & 0xF0) > 0x90) {
 		if (((cpu.A & 0xF0) + 0x60) > 0xFF)
 			c = 1;
 		cpu.A += 0x60;
-	}
-	cpu.SetFlags((cpu.A == 0), cpu.GetFlagN(), 0, c);
+	}*/
+    int a = cpu.A;
+
+    if (!cpu.GetFlagN()) {
+        if (cpu.GetFlagH() || (a & 0xF) > 9)
+            a += 0x06;
+
+        if (cpu.GetFlagC() || a > 0x9F)
+            a += 0x60;
+    }
+    else {
+        if (cpu.GetFlagH())
+            a = (a - 6) & 0xFF;
+
+        if (cpu.GetFlagC())
+            a -= 0x60;
+    }
+
+    if ((a & 0x100) == 0x100)
+        c = 1;
+
+    a &= 0xFF;
+
+
+    cpu.A = (BYTE)a;
+
+	cpu.SetFlags((a == 0), cpu.GetFlagN(), 0, c);
 }
 void Emulator::CPL_A() {
 	cpu.A = ~cpu.A;
