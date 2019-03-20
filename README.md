@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Game Boy Emulator
 ==
 
@@ -36,4 +35,3 @@ A Game Boy Emulator, which emulates a Game Boy. Very early work in progress at t
 Libraries: SDL
 
 CPU Manual: http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
->>>>>>> Initial commit
