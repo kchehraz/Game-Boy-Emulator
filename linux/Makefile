@@ -1,4 +1,9 @@
+CPPFLAGS=-g
+LINKER_FLAGS=-lSDL2
+PROG=gb
+
+
 default:
-	g++ -g *.cpp -lSDL2
+	g++ $(CPP_FLAGS) -o $(PROG) *.cpp $(LINKER_FLAGS)
 clean:
-	rm -f *.o
+	rm gb
