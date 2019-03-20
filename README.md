@@ -29,6 +29,7 @@ A lot of the documentation on the Game Boy is inaccurate. I used several resourc
 [GBZ80 Opcode reference](https://rednex.github.io/rgbds/gbz80.7.html) An accurate guide to the operations, though there was a mistake on it that might have been fixed by now
 
 [Blargg's Game Boy hardware test roms](https://github.com/retrio/gb-test-roms) - Seriously helpful and probably necessary considering how much documentation is inaccurate. These ROMs will test everything pretty thoroughly and output the results to the screen (assuming you have background rendering implemented). 
+
 =======
 A Game Boy Emulator, which emulates a Game Boy. Very early work in progress at the moment.
 
