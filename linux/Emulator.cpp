@@ -3,6 +3,9 @@ using namespace std;
 
 static int count = 0; // op count for debugging purposes
 
+void debugPrintInfo() {
+}
+
 Emulator::Emulator() {
     cycles = 0;
 
@@ -127,27 +130,18 @@ void Emulator::HandleInterrupts() {
 // Helper functions
 // Increment PC when we fetch the opcode
 BYTE Emulator::FetchOpcode() {
+    printf("PC: 0x%04X\n", cpu.PC);
+    printf("SP: 0x%04X\n", cpu.SP);
+    printf("Opcode: %02X\n", memory.ReadByte(cpu.PC));
+    printf("AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X\n", cpu.AF, cpu.BC, cpu.DE, cpu.HL);
+    //std::cout << "Press enter to continue...";
+    //std::cin.get();
+    
     return memory.ReadByte(cpu.PC++);
 }
 
 // PC is on the first byte after the opcode
 int Emulator::ExecuteOpcode(BYTE opcode) {
-    /*if (memory.mem[0xFF02] == 0x81) {
-        cout << hex << (int)memory.mem[0xFF01] << endl;
-        cout << "TEST COMPLETE\n\n\n\n\n\n\n\n\n\n\n\n" << endl;
-        printf("Count: %d\n", count);
-        cin.get();
-    }
-    if (count >= 16441) {
-        //cin.get();
-    }
-    count++; // increment op count
-    //printf("PC: 0x%04X\n", cpu.PC);
-    //printf("Opcode: %02X\n", opcode);
-    //printf("AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X\n", cpu.AF, cpu.BC, cpu.DE, cpu.HL);
-    //std::cout << "Press enter to continue...";
-    //std::cin.get();
-    */
 
     switch (opcode) {
         // Order in terms of functions rather than opcodes for better readability
@@ -241,8 +235,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x32: { LDD_HL_A(); break; }
         case 0x2A: { LD(cpu.A, memory.mem[cpu.HL++]); break; }
         case 0x22: { LD(memory.mem[cpu.HL++], cpu.A); break; }
-        case 0xE0: { LD(memory.mem[0xFF00+FetchOpcode()], cpu.A); break; }
-        case 0xF0: { LD(cpu.A, memory.mem[0xFF00 + FetchOpcode()]); break; }
+        case 0xE0: { LD(memory.mem[0xFF00+memory.mem[cpu.PC++]], cpu.A); break; }
+        case 0xF0: { LD(cpu.A, memory.mem[0xFF00 + memory.mem[cpu.PC++]]); break; }
 
                    // 16-Bit Loads
         case 0x01: { LD_Rd_nn(cpu.BC); break; }
