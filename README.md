@@ -5,7 +5,7 @@ Game Boy Emulator
 
 A Game Boy Emulator, which emulates a Game Boy. Currently work in progress. I'm using SDL to render graphics. I'll add compile instructions to this README once the emulator is running properly. It would be easiest to compile with Linux as setting up SDL with Visual Studio is kind of annoying, which is mainly why I'm using Linux to write this now.
 
-The Game Boy uses the Sharp LR35902, an 8-bit CPU based on the very similar Zilog Z80 and Intel 8080 microprocessors. It has a display of 160x144 pixels and uses a tile system of 8x8 pixels each to render the sprites and background/window tiles.
+The Game Boy uses the Sharp LR35902, an 8-bit CPU based on the Zilog Z80 and Intel 8080. It has a display of 160x144 pixels and uses a tile system of 8x8 pixels each to render the sprites and background/window tiles.
 
 |  | Progress |
 | ------------- | ------------- |
