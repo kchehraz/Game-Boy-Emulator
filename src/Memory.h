@@ -23,7 +23,14 @@ public:
 	void WriteByte(WORD addr, BYTE value);
 	void WriteWord(WORD addr, WORD value);
 	
-	BYTE GetFlagIE(); // Interrupt Enable
+	// Display flags
+    BYTE GetFlagIE(); // Interrupt Enable
 	BYTE GetFlagIF(); // Interrupt Flag (request)
     BYTE GetFlagLCDC(); // LCD Control
+    
+    // Timing flags
+    BYTE GetFlagDIV(); // Divider
+    BYTE GetFlagTIMA(); // Counter
+    BYTE GetFlagTMA(); // Modulo
+    BYTE GetFlagTAC(); // Control
 };

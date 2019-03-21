@@ -27,6 +27,7 @@ void Memory::WriteWord(WORD addr, WORD value) {
 	mem[addr + 1] = value >> 8;
 }
 
+// Display flags
 BYTE Memory::GetFlagIE() {
 	return mem[0xFFFF]; // memory location of IE flag
 }
@@ -37,4 +38,21 @@ BYTE Memory::GetFlagIF() {
 
 BYTE Memory::GetFlagLCDC() {
     return mem[0xFF40];
+}
+
+// Timing flags
+BYTE Memory::GetFlagDIV() {
+    return mem[0xFF04];
+}
+
+BYTE Memory::GetFlagTIMA() {
+    return mem[0xFF05];
+}
+
+BYTE Memory::GetFlagTMA() {
+    return mem[0xFF06];
+}
+
+BYTE Memory::GetFlagTAC() {
+    return mem[0xFF07];
 }
