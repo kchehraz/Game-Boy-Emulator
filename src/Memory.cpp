@@ -56,3 +56,19 @@ BYTE Memory::GetFlagTMA() {
 BYTE Memory::GetFlagTAC() {
     return mem[0xFF07];
 }
+
+void Memory::SetFlagDIV(BYTE val) {
+    mem[0xFF04] = val;
+}
+
+void Memory::SetFlagTIMA(BYTE val) {
+    mem[0xFF05] = val;
+}
+
+void Memory::SetFlagTMA(BYTE val) {
+    mem[0xFF06] = val;
+}
+
+void Memory::SetFlagTAC(BYTE val) {
+    mem[0xFF07] = val;
+}

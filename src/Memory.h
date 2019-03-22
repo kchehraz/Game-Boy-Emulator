@@ -33,4 +33,8 @@ public:
     BYTE GetFlagTIMA(); // Counter
     BYTE GetFlagTMA(); // Modulo
     BYTE GetFlagTAC(); // Control
+    void SetFlagDIV(BYTE val); // Divider
+    void SetFlagTIMA(BYTE val); // Counter
+    void SetFlagTMA(BYTE val); // Modulo
+    void SetFlagTAC(BYTE val); // Control
 };
