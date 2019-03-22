@@ -238,21 +238,21 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0xF0: { LD(cpu.A, memory.mem[0xFF00 + memory.mem[cpu.PC++]]); cycles += 12; break; }
 
                    // 16-Bit Loads
-        case 0x01: { LD_Rd_nn(cpu.BC); cycles += 4; break; }
-        case 0x11: { LD_Rd_nn(cpu.DE); cycles += 4; break; }
-        case 0x21: { LD_Rd_nn(cpu.HL); cycles += 4; break; }
-        case 0x31: { LD_Rd_nn(cpu.SP); cycles += 4; break; }
-        case 0xF9: { LD_Rd_Rn(cpu.SP, cpu.HL); cycles += 4; break; }
-        case 0xF8: { LD_HL_SP_n(); cycles += 4; break; }
-        case 0x08: { LD_nn_Rn(cpu.SP); cycles += 4; break; }
-        case 0xF5: { PUSH(cpu.AF); cycles += 4; break; }
-        case 0xC5: { PUSH(cpu.BC); cycles += 4; break; }
-        case 0xD5: { PUSH(cpu.DE); cycles += 4; break; }
-        case 0xE5: { PUSH(cpu.HL); cycles += 4; break; }
-        case 0xF1: { POP(cpu.AF); cpu.F ^= (cpu.F & 0x0F); cycles += 4; break; }
-        case 0xC1: { POP(cpu.BC); cycles += 4; break; }
-        case 0xD1: { POP(cpu.DE); cycles += 4; break; }
-        case 0xE1: { POP(cpu.HL); cycles += 4; break; }
+        case 0x01: { LD_Rd_nn(cpu.BC); cycles += 12; break; }
+        case 0x11: { LD_Rd_nn(cpu.DE); cycles += 12; break; }
+        case 0x21: { LD_Rd_nn(cpu.HL); cycles += 12; break; }
+        case 0x31: { LD_Rd_nn(cpu.SP); cycles += 12; break; }
+        case 0xF9: { LD_Rd_Rn(cpu.SP, cpu.HL); cycles += 8; break; }
+        case 0xF8: { LD_HL_SP_n(); cycles += 12; break; }
+        case 0x08: { LD_nn_Rn(cpu.SP); cycles += 20; break; }
+        case 0xF5: { PUSH(cpu.AF); cycles += 16; break; }
+        case 0xC5: { PUSH(cpu.BC); cycles += 16; break; }
+        case 0xD5: { PUSH(cpu.DE); cycles += 16; break; }
+        case 0xE5: { PUSH(cpu.HL); cycles += 16; break; }
+        case 0xF1: { POP(cpu.AF); cpu.F ^= (cpu.F & 0x0F); cycles += 12; break; }
+        case 0xC1: { POP(cpu.BC); cycles += 12; break; }
+        case 0xD1: { POP(cpu.DE); cycles += 12; break; }
+        case 0xE1: { POP(cpu.HL); cycles += 12; break; }
 
                    // 8-Bit Arithmetic
         case 0x87: { ADD_A_Rn(cpu.A); cycles += 4; break; }
@@ -262,8 +262,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x83: { ADD_A_Rn(cpu.E); cycles += 4; break; }
         case 0x84: { ADD_A_Rn(cpu.H); cycles += 4; break; }
         case 0x85: { ADD_A_Rn(cpu.L); cycles += 4; break; }
-        case 0x86: { ADD_A_Rn(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xC6: { ADD_A_n(); cycles += 4; break; }
+        case 0x86: { ADD_A_Rn(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xC6: { ADD_A_n(); cycles += 8; break; }
         case 0x8F: { ADC_A_Rn(cpu.A); cycles += 4; break; }
         case 0x88: { ADC_A_Rn(cpu.B); cycles += 4; break; }
         case 0x89: { ADC_A_Rn(cpu.C); cycles += 4; break; }
@@ -271,8 +271,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x8B: { ADC_A_Rn(cpu.E); cycles += 4; break; }
         case 0x8C: { ADC_A_Rn(cpu.H); cycles += 4; break; }
         case 0x8D: { ADC_A_Rn(cpu.L); cycles += 4; break; }
-        case 0x8E: { ADC_A_Rn(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xCE: { ADC_A_n(); cycles += 4; break; }
+        case 0x8E: { ADC_A_Rn(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xCE: { ADC_A_n(); cycles += 8; break; }
         case 0x97: { SUB_A(cpu.A); cycles += 4; break; }
         case 0x90: { SUB_A(cpu.B); cycles += 4; break; }
         case 0x91: { SUB_A(cpu.C); cycles += 4; break; }
@@ -280,8 +280,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x93: { SUB_A(cpu.E); cycles += 4; break; }
         case 0x94: { SUB_A(cpu.H); cycles += 4; break; }
         case 0x95: { SUB_A(cpu.L); cycles += 4; break; }
-        case 0x96: { SUB_A(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xD6: { SUB_A_n();  break; }
+        case 0x96: { SUB_A(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xD6: { SUB_A_n(); cycles += 8; break; }
         case 0x9F: { SBC_A(cpu.A); cycles += 4; break; }
         case 0x98: { SBC_A(cpu.B); cycles += 4; break; }
         case 0x99: { SBC_A(cpu.C); cycles += 4; break; }
@@ -289,8 +289,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x9B: { SBC_A(cpu.E); cycles += 4; break; }
         case 0x9C: { SBC_A(cpu.H); cycles += 4; break; }
         case 0x9D: { SBC_A(cpu.L); cycles += 4; break; }
-        case 0x9E: { SBC_A(cpu.A); cycles += 4; break; }
-        case 0xDE: { SBC_A_n(); cycles += 4; break; }
+        case 0x9E: { SBC_A(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xDE: { SBC_A_n(); cycles += 8; break; }
         case 0xA7: { AND_A(cpu.A); cycles += 4; break; }
         case 0xA0: { AND_A(cpu.B); cycles += 4; break; }
         case 0xA1: { AND_A(cpu.C); cycles += 4; break; }
@@ -298,8 +298,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0xA3: { AND_A(cpu.E); cycles += 4; break; }
         case 0xA4: { AND_A(cpu.H); cycles += 4; break; }
         case 0xA5: { AND_A(cpu.L); cycles += 4; break; }
-        case 0xA6: { AND_A(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xE6: { AND_A_n(); cycles += 4; break; }
+        case 0xA6: { AND_A(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xE6: { AND_A_n(); cycles += 8; break; }
         case 0xB7: { OR_A(cpu.A); cycles += 4; break; }
         case 0xB0: { OR_A(cpu.B); cycles += 4; break; }
         case 0xB1: { OR_A(cpu.C); cycles += 4; break; }
@@ -307,8 +307,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0xB3: { OR_A(cpu.E); cycles += 4; break; }
         case 0xB4: { OR_A(cpu.H); cycles += 4; break; }
         case 0xB5: { OR_A(cpu.L); cycles += 4; break; }
-        case 0xB6: { OR_A(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xF6: { OR_A_n(); cycles += 4; break; }
+        case 0xB6: { OR_A(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xF6: { OR_A_n(); cycles += 8; break; }
         case 0xAF: { XOR_A(cpu.A); cycles += 4; break; }
         case 0xA8: { XOR_A(cpu.B); cycles += 4; break; }
         case 0xA9: { XOR_A(cpu.C); cycles += 4; break; }
@@ -316,8 +316,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0xAB: { XOR_A(cpu.E); cycles += 4; break; }
         case 0xAC: { XOR_A(cpu.H); cycles += 4; break; }
         case 0xAD: { XOR_A(cpu.L); cycles += 4; break; }
-        case 0xAE: { XOR_A(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xEE: { XOR_A_n(); cycles += 4; break; }
+        case 0xAE: { XOR_A(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xEE: { XOR_A_n(); cycles += 8; break; }
         case 0xBF: { CP_A(cpu.A); cycles += 4; break; }
         case 0xB8: { CP_A(cpu.B); cycles += 4; break; }
         case 0xB9: { CP_A(cpu.C); cycles += 4; break; }
@@ -325,8 +325,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0xBB: { CP_A(cpu.E); cycles += 4; break; }
         case 0xBC: { CP_A(cpu.H); cycles += 4; break; }
         case 0xBD: { CP_A(cpu.L); cycles += 4; break; }
-        case 0xBE: { CP_A(memory.mem[cpu.HL]); cycles += 4; break; }
-        case 0xFE: { CP_A_n(); cycles += 4; break; }
+        case 0xBE: { CP_A(memory.mem[cpu.HL]); cycles += 8; break; }
+        case 0xFE: { CP_A_n(); cycles += 8; break; }
         case 0x3C: { INC(cpu.A); cycles += 4; break; }
         case 0x04: { INC(cpu.B); cycles += 4; break; }
         case 0x0C: { INC(cpu.C); cycles += 4; break; }
@@ -334,7 +334,7 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x1C: { INC(cpu.E); cycles += 4; break; }
         case 0x24: { INC(cpu.H); cycles += 4; break; }
         case 0x2C: { INC(cpu.L); cycles += 4; break; }
-        case 0x34: { INC(memory.mem[cpu.HL]); cycles += 4; break; }
+        case 0x34: { INC(memory.mem[cpu.HL]); cycles += 12; break; }
         case 0x3D: { DEC(cpu.A); cycles += 4; break; }
         case 0x05: { DEC(cpu.B); cycles += 4; break; }
         case 0x0D: { DEC(cpu.C); cycles += 4; break; }
@@ -342,24 +342,25 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x1D: { DEC(cpu.E); cycles += 4; break; }
         case 0x25: { DEC(cpu.H); cycles += 4; break; }
         case 0x2D: { DEC(cpu.L); cycles += 4; break; }
-        case 0x35: { DEC(memory.mem[cpu.HL]); cycles += 4; break; }
+        case 0x35: { DEC(memory.mem[cpu.HL]); cycles += 12; break; }
 
                    // 16-Bit Arithmetic
-        case 0x09: { ADD_HL_Rn(cpu.BC); cycles += 4; break; }
-        case 0x19: { ADD_HL_Rn(cpu.DE); cycles += 4; break; }
-        case 0x29: { ADD_HL_Rn(cpu.HL); cycles += 4; break; }
-        case 0x39: { ADD_HL_Rn(cpu.SP); cycles += 4; break; }
-        case 0xE8: { ADD_SP_n(); cycles += 4; break; }
-        case 0x03: { INC_Rd(cpu.BC); cycles += 4; break; }
-        case 0x13: { INC_Rd(cpu.DE); cycles += 4; break; }
-        case 0x23: { INC_Rd(cpu.HL); cycles += 4; break; }
-        case 0x33: { INC_Rd(cpu.SP); cycles += 4; break; }
-        case 0x0B: { DEC_Rd(cpu.BC); cycles += 4; break; }
-        case 0x1B: { DEC_Rd(cpu.DE); cycles += 4; break; }
-        case 0x2B: { DEC_Rd(cpu.HL); cycles += 4; break; }
-        case 0x3B: { DEC_Rd(cpu.SP); cycles += 4; break; }
+        case 0x09: { ADD_HL_Rn(cpu.BC); cycles += 8; break; }
+        case 0x19: { ADD_HL_Rn(cpu.DE); cycles += 8; break; }
+        case 0x29: { ADD_HL_Rn(cpu.HL); cycles += 8; break; }
+        case 0x39: { ADD_HL_Rn(cpu.SP); cycles += 8; break; }
+        case 0xE8: { ADD_SP_n(); cycles += 16; break; }
+        case 0x03: { INC_Rd(cpu.BC); cycles += 8; break; }
+        case 0x13: { INC_Rd(cpu.DE); cycles += 8; break; }
+        case 0x23: { INC_Rd(cpu.HL); cycles += 8; break; }
+        case 0x33: { INC_Rd(cpu.SP); cycles += 8; break; }
+        case 0x0B: { DEC_Rd(cpu.BC); cycles += 8; break; }
+        case 0x1B: { DEC_Rd(cpu.DE); cycles += 8; break; }
+        case 0x2B: { DEC_Rd(cpu.HL); cycles += 8; break; }
+        case 0x3B: { DEC_Rd(cpu.SP); cycles += 8; break; }
 
                    // Miscellaneous
+                   // TODO
         case 0xCB: { ExecuteOpcodeMisc(); cycles += 4; break; } // 256 more ops; containing bit operations
 
         case 0x27: { DAA(); cycles += 4; break; }
