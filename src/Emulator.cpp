@@ -30,12 +30,17 @@ void Emulator::Update() {
         }
 
         BYTE opcode = FetchOpcode();
-        ExecuteOpcode(opcode);
-        cyclesThisUpdate += 8;
+        cyclesThisUpdate += ExecuteOpcode(opcode);
         cycles += cyclesThisUpdate;
+        
+        UpdateTimers();
     }
     UpdateGraphics();
-    // RenderScreen();
+    //RenderScreen();
+}
+
+void Emulator::UpdateTimers() {
+
 }
 
 void Emulator::UpdateGraphics() {
@@ -130,10 +135,10 @@ void Emulator::HandleInterrupts() {
 // Helper functions
 // Increment PC when we fetch the opcode
 BYTE Emulator::FetchOpcode() {
-    printf("PC: 0x%04X\n", cpu.PC);
-    printf("SP: 0x%04X\n", cpu.SP);
-    printf("Opcode: %02X\n", memory.ReadByte(cpu.PC));
-    printf("AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X\n", cpu.AF, cpu.BC, cpu.DE, cpu.HL);
+    //printf("PC: 0x%04X\n", cpu.PC);
+    //printf("SP: 0x%04X\n", cpu.SP);
+    //printf("Opcode: %02X\n", memory.ReadByte(cpu.PC));
+    //printf("AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X\n", cpu.AF, cpu.BC, cpu.DE, cpu.HL);
     //std::cout << "Press enter to continue...";
     //std::cin.get();
     
@@ -145,8 +150,8 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
     int cycles = 0;
     switch (opcode) {
         // Order in terms of functions rather than opcodes for better readability
-        // based on the order of the CPU manual PDF
-        case 0x00: { NOP(); cycles += 4; cycles += 4; break; }
+        // Based on the order of the CPU manual PDF
+        case 0x00: { NOP(); cycles += 4; break; }
 
                    // 8-Bit Loads
         case 0x06: { LD_n(cpu.B); cycles += 4; break; }
@@ -165,26 +170,26 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x7C: { LD(cpu.A, cpu.H); cycles += 4; break; }
         case 0x7D: { LD(cpu.A, cpu.L); cycles += 4; break; }
         case 0x7E: { LD(cpu.A, memory.mem[cpu.HL]); cycles += 8; break; }
-        case 0x40: { LD(cpu.B, cpu.B); cycles += 4; break;  }
-        case 0x41: { LD(cpu.B, cpu.C); cycles += 4; break;  }
-        case 0x42: { LD(cpu.B, cpu.D); cycles += 4; break;  }
-        case 0x43: { LD(cpu.B, cpu.E); cycles += 4; break;  }
-        case 0x44: { LD(cpu.B, cpu.H); cycles += 4; break;  }
-        case 0x45: { LD(cpu.B, cpu.L); cycles += 4; break;  }
+        case 0x40: { LD(cpu.B, cpu.B); cycles += 4; break; }
+        case 0x41: { LD(cpu.B, cpu.C); cycles += 4; break; }
+        case 0x42: { LD(cpu.B, cpu.D); cycles += 4; break; }
+        case 0x43: { LD(cpu.B, cpu.E); cycles += 4; break; }
+        case 0x44: { LD(cpu.B, cpu.H); cycles += 4; break; }
+        case 0x45: { LD(cpu.B, cpu.L); cycles += 4; break; }
         case 0x46: { LD(cpu.B, memory.mem[cpu.HL]); cycles += 8;  break; }
-        case 0x48: { LD(cpu.C, cpu.B); cycles += 4; break;  }
-        case 0x49: { LD(cpu.C, cpu.C); cycles += 4; break;  }
-        case 0x4A: { LD(cpu.C, cpu.D); cycles += 4; break;  }
-        case 0x4B: { LD(cpu.C, cpu.E); cycles += 4; break;  }
-        case 0x4C: { LD(cpu.C, cpu.H); cycles += 4; break;  }
-        case 0x4D: { LD(cpu.C, cpu.L); cycles += 4; break;  }
+        case 0x48: { LD(cpu.C, cpu.B); cycles += 4; break; }
+        case 0x49: { LD(cpu.C, cpu.C); cycles += 4; break; }
+        case 0x4A: { LD(cpu.C, cpu.D); cycles += 4; break; }
+        case 0x4B: { LD(cpu.C, cpu.E); cycles += 4; break; }
+        case 0x4C: { LD(cpu.C, cpu.H); cycles += 4; break; }
+        case 0x4D: { LD(cpu.C, cpu.L); cycles += 4; break; }
         case 0x4E: { LD(cpu.C, memory.mem[cpu.HL]); cycles += 8;  break; }
-        case 0x50: { LD(cpu.D, cpu.B); cycles += 4; break;  }
-        case 0x51: { LD(cpu.D, cpu.C); cycles += 4; break;  }
-        case 0x52: { LD(cpu.D, cpu.D); cycles += 4; break;  }
-        case 0x53: { LD(cpu.D, cpu.E); cycles += 4; break;  }
-        case 0x54: { LD(cpu.D, cpu.H); cycles += 4; break;  }
-        case 0x55: { LD(cpu.D, cpu.L); cycles += 4; break;  }
+        case 0x50: { LD(cpu.D, cpu.B); cycles += 4; break; }
+        case 0x51: { LD(cpu.D, cpu.C); cycles += 4; break; }
+        case 0x52: { LD(cpu.D, cpu.D); cycles += 4; break; }
+        case 0x53: { LD(cpu.D, cpu.E); cycles += 4; break; }
+        case 0x54: { LD(cpu.D, cpu.H); cycles += 4; break; }
+        case 0x55: { LD(cpu.D, cpu.L); cycles += 4; break; }
         case 0x56: { LD(cpu.D, memory.mem[cpu.HL]); cycles += 8; break; }
         case 0x58: { LD(cpu.E, cpu.B); cycles += 4; break; }
         case 0x59: { LD(cpu.E, cpu.C); cycles += 4; break; }
@@ -360,8 +365,7 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x3B: { DEC_Rd(cpu.SP); cycles += 8; break; }
 
                    // Miscellaneous
-                   // TODO
-        case 0xCB: { ExecuteOpcodeMisc(); cycles += 4; break; } // 256 more ops; containing bit operations
+        case 0xCB: { cycles += ExecuteOpcodeMisc(); cycles += 4; break; } // 256 more ops; containing bit operations
 
         case 0x27: { DAA(); cycles += 4; break; }
         case 0x2F: { CPL_A(); cycles += 4; break; }
@@ -379,42 +383,42 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
         case 0x1F: { RR_A(); cycles += 4; break; }
 
                    // Jumps
-        case 0xC3: { JP_nn(); cycles += 4; break; }
-        case 0xC2: { JP_cc_nn(); cycles += 4; break; }
-        case 0xCA: { JP_cc_nn(); cycles += 4; break; }
-        case 0xD2: { JP_cc_nn(); cycles += 4; break; }
-        case 0xDA: { JP_cc_nn(); cycles += 4; break; }
+        case 0xC3: { JP_nn(); cycles += 16; break; }
+        case 0xC2: { JP_cc_nn(); cycles += 12; if (!cpu.GetFlagZ()) cycles+=4; break; }
+        case 0xCA: { JP_cc_nn(); cycles += 12; if (cpu.GetFlagZ()) cycles+=4; break; }
+        case 0xD2: { JP_cc_nn(); cycles += 12; if (!cpu.GetFlagC()) cycles+=4; break; }
+        case 0xDA: { JP_cc_nn(); cycles += 12; if (cpu.GetFlagC()) cycles+=4; break; }
         case 0xE9: { JP_HL(); cycles += 4; break; }
-        case 0x18: { JR_n(); cycles += 4; break; }
-        case 0x20: { JR_cc_n(); cycles += 4; break; }
-        case 0x28: { JR_cc_n(); cycles += 4; break; }
-        case 0x30: { JR_cc_n(); cycles += 4; break; }
-        case 0x38: { JR_cc_n(); cycles += 4; break; }
+        case 0x18: { JR_n(); cycles += 12; break; }
+        case 0x20: { JR_cc_n(); cycles += 8; if (!cpu.GetFlagZ()) cycles+=4; break; }
+        case 0x28: { JR_cc_n(); cycles += 8; if (cpu.GetFlagZ()) cycles+=4; break; }
+        case 0x30: { JR_cc_n(); cycles += 8; if (!cpu.GetFlagC()) cycles+=4; break; }
+        case 0x38: { JR_cc_n(); cycles += 8; if (cpu.GetFlagC()) cycles+=4; break; }
 
                    // Calls
-        case 0xCD: { CALL_nn(); cycles += 4; break; }
-        case 0xC4: { CALL_cc_nn(); cycles += 4; break; }
-        case 0xCC: { CALL_cc_nn(); cycles += 4; break; }
-        case 0xD4: { CALL_cc_nn(); cycles += 4; break; }
-        case 0xDC: { CALL_cc_nn(); cycles += 4; break; }
+        case 0xCD: { CALL_nn(); cycles += 24; break; }
+        case 0xC4: { CALL_cc_nn(); cycles += 12; if (!cpu.GetFlagZ()) cycles+=12; break; }
+        case 0xCC: { CALL_cc_nn(); cycles += 12; if (cpu.GetFlagZ()) cycles+=12; break; }
+        case 0xD4: { CALL_cc_nn(); cycles += 12; if (!cpu.GetFlagC()) cycles+=12; break; }
+        case 0xDC: { CALL_cc_nn(); cycles += 12; if (cpu.GetFlagC()) cycles+=12; break; }
 
                    // Restarts
-        case 0xC7: { RST_n(); cycles += 4; break; }
-        case 0xCF: { RST_n(); cycles += 4; break; }
-        case 0xD7: { RST_n(); cycles += 4; break; }
-        case 0xDF: { RST_n(); cycles += 4; break; }
-        case 0xE7: { RST_n(); cycles += 4; break; }
-        case 0xEF: { RST_n(); cycles += 4; break; }
-        case 0xF7: { RST_n(); cycles += 4; break; }
-        case 0xFF: { RST_n(); cycles += 4; break; }
+        case 0xC7: { RST_n(); cycles += 16; break; }
+        case 0xCF: { RST_n(); cycles += 16; break; }
+        case 0xD7: { RST_n(); cycles += 16; break; }
+        case 0xDF: { RST_n(); cycles += 16; break; }
+        case 0xE7: { RST_n(); cycles += 16; break; }
+        case 0xEF: { RST_n(); cycles += 16; break; }
+        case 0xF7: { RST_n(); cycles += 16; break; }
+        case 0xFF: { RST_n(); cycles += 16; break; }
 
                    // Returns
-        case 0xC9: { RET(); cycles += 4; break; }
-        case 0xC0: { RET_cc(); cycles += 4; break; }
-        case 0xC8: { RET_cc(); cycles += 4; break; }
-        case 0xD0: { RET_cc(); cycles += 4; break; }
-        case 0xD8: { RET_cc(); cycles += 4; break; }
-        case 0xD9: { RETI(); cycles += 4; break; }
+        case 0xC9: { RET(); cycles += 16; break; }
+        case 0xC0: { RET_cc(); cycles += 8; if (!cpu.GetFlagZ()) cycles+=12; break; }
+        case 0xC8: { RET_cc(); cycles += 8; if (cpu.GetFlagZ()) cycles+=12; break; }
+        case 0xD0: { RET_cc(); cycles += 8; if (!cpu.GetFlagC()) cycles+=12; break; }
+        case 0xD8: { RET_cc(); cycles += 8; if (cpu.GetFlagC()) cycles+=12; break; }
+        case 0xD9: { RETI(); cycles += 16; break; }
 
 
                    //
@@ -444,44 +448,56 @@ int Emulator::ExecuteOpcode(BYTE opcode) {
     return cycles;
 }
 
-void Emulator::ExecuteOpcodeMisc() {
-    BYTE op = memory.mem[cpu.PC];
+int Emulator::ExecuteOpcodeMisc() {
+    BYTE op = memory.mem[cpu.PC]; // don't need to increment here, we do it in the functions
 
     // Switch statements already set up within the function
-    //printf("%02x\n", op);
-    //cin.get();
+    // Certain operations take more cycles
+    int cycles = 8; // minimum 8 cycles for all operations
     if (op >= 0x40 && op < 0x80) {
         BIT_b_r();
+        if (op%8 == 6) cycles += 4;
     }
     else if (op >= 0x80 && op < 0xC0) {
         RES_b_r();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0xC0 && op <= 0xFF) {
         SET_b_r();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x00 && op < 0x08) {
         RLC_n();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x08 && op < 0x10) {
         RRC_n();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x10 && op < 0x18) {
         RL_n();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x18 && op < 0x20) {
         RR_n();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x20 && op < 0x28) {
         SLA_n();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x28 && op < 0x30) {
         SRA_n();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x30 && op < 0x38) {
         SWAP();
+        if (op%8 == 6) cycles += 8;
     }
     else if (op >= 0x38 && op < 0x40) {
         SRL_n();
+        if (op%8 == 6) cycles += 8;
     }
+    return cycles;
 }
 

@@ -18,10 +18,11 @@ public:
 
 	BYTE FetchOpcode();
 	int ExecuteOpcode(BYTE opcode);
-	void ExecuteOpcodeMisc();
+	int ExecuteOpcodeMisc();
 
 	void Update();
 	void UpdateGraphics();
+    void UpdateTimers();
     void RenderTile(int row, int column, int mapBank);
     void RenderSpriteTile(int index);
     void HandleInterrupts();

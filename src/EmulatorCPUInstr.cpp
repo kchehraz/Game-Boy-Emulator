@@ -1047,7 +1047,7 @@ void Emulator::JP_nn() {
 	WORD addr = memory.ReadWord(cpu.PC);
 	cpu.PC = addr;
 }
-void Emulator::JP_cc_nn() {
+void Emulator::JP_cc_nn() { // return cycles
 	BYTE op = memory.ReadByte(cpu.PC - 1);
 	WORD addr = memory.ReadWord(cpu.PC);
 
