@@ -9,7 +9,8 @@ void debugPrintInfo() {
 Emulator::Emulator() {
     cycles = 0;
     timer = 0;
-    timerCounter = 1024; // Initial value is 1024
+    timerCounter = 1024; // Used to increment timer register, default count from 1024 (increment at 4096 Hz)
+    dividerCounter = 0; // Used to increment divider register
     
     isHalted = false;
     interruptsOn = false;
@@ -25,25 +26,54 @@ void Emulator::Update() {
     int cyclesThisUpdate = 0;
 
     while (cyclesThisUpdate < MAXCYCLES) {
-        BOOL isHandlingInterrupts = false;
-        HandleInterrupts();
-        if (isHandlingInterrupts) {
-            cyclesThisUpdate += 20;
-        }
+        //BOOL isHandlingInterrupts = false;
+        //HandleInterrupts();
+        //if (isHandlingInterrupts) {
+        //    cyclesThisUpdate += 20;
+        //}
 
         BYTE opcode = FetchOpcode();
-        cyclesThisUpdate += ExecuteOpcode(opcode);
-        cycles += cyclesThisUpdate;
+        cycles = ExecuteOpcode(opcode); // Number of cycles for this instruction
+        cyclesThisUpdate += cycles;
         
-        UpdateTimers(cyclesThisUpdate);
+        UpdateTimers(cycles);
     }
     UpdateGraphics();
     //RenderScreen();
 }
 
+bool Emulator::IsTimerEnabled() {
+    if (memory.mem[0xFF07]) cout << "TIMER NOT ZERO" << endl;
+    return memory.GetRegTAC()&4; // bit 2 == timer enabled
+}
+
 void Emulator::UpdateTimers(int cycles) {
-    if (memory.GetRegTAC()) { // Check timer enabled
-        timer += cycles;
+    // Divider always counts
+    dividerCounter += cycles; // count cycles until 256, then increment divider register
+    if (dividerCounter >= 256) {
+        dividerCounter = 0;
+        memory.mem[0xFF04]++; // will reset to 0 automatically due to overflow
+    }
+
+    if (IsTimerEnabled()) { // Count timer only if enabled
+        timerCounter -= cycles;
+        
+        int timerControl = memory.GetRegTAC() & 3; // speed of timer
+        if (timerCounter <= 0) {
+            switch (timerControl) {
+                case 0: timerCounter = 1024; break;
+                case 1: timerCounter = 16; break;
+                case 2: timerCounter = 64; break;
+                case 3: timerCounter = 256; break;
+            }
+            if (memory.GetRegTIMA() == 255) {
+                memory.SetRegTIMA(memory.GetRegTMA());
+                // TODO: request interrupt
+            }
+            else {
+                memory.SetRegTIMA(memory.GetRegTIMA()+1);
+            }
+        }
     }
 }
 

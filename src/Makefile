@@ -4,6 +4,6 @@ PROG=gb
 
 
 default:
-	g++ $(CPP_FLAGS) -o $(PROG) *.cpp $(LINKER_FLAGS)
+	g++ -g -o $(PROG) *.cpp $(LINKER_FLAGS)
 clean:
 	rm gb

@@ -19,6 +19,9 @@ WORD Memory::ReadWord(WORD addr) {
 
 void Memory::WriteByte(WORD addr, BYTE value) {
     mem[addr] = value;
+    if (addr == 0xFF04) { // div register; if written to, reset to 0
+        mem[addr] = 0;
+    }
 }
 
 void Memory::WriteWord(WORD addr, WORD value) {

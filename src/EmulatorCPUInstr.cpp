@@ -1,7 +1,7 @@
 #include "Emulator.h"
 
 // Helper functions
-void Emulator::SwapBits(BYTE & value) {
+void Emulator::SwapBits(BYTE & value) { // TODO this writes to memory, could affect timer register which requires WriteByte
 	value = ((value & 0xF) << 4) | ((value & 0xF0) >> 4);
 }
 
@@ -70,10 +70,12 @@ void Emulator::LD_nn_A() {
 	cpu.PC += 2;
 }
 void Emulator::LDD_A_HL() {
-	cpu.A = memory.mem[cpu.HL--];
+	cpu.A = memory.ReadByte(cpu.HL);
+    cpu.HL--;
 }
 void Emulator::LDD_HL_A() {
-	memory.mem[cpu.HL--] = cpu.A;
+    memory.WriteByte(cpu.HL, cpu.A);
+    cpu.HL--;
 }
 void Emulator::LD_A_nn() {
 	WORD nn = memory.ReadWord(cpu.PC);
@@ -788,8 +790,10 @@ void Emulator::SRA_n() {
 		{
 			BOOL msb = memory.mem[cpu.HL] & 0x80;
 			cpu.SetFlags(0, 0, 0, memory.mem[cpu.HL] & 0x01);
-			memory.mem[cpu.HL] >>= 1;
-			memory.mem[cpu.HL] |= msb;
+			//memory.mem[cpu.HL] >>= 1;
+            memory.WriteByte(cpu.HL, memory.mem[cpu.HL] >> 1);
+			//memory.mem[cpu.HL] |= msb;
+            memory.WriteByte(cpu.HL, memory.mem[cpu.HL] | msb);
             cpu.SetFlagZ(memory.mem[cpu.HL] == 0);
 			break;
 		}
@@ -857,7 +861,8 @@ void Emulator::SRL_n() {
 		case 0x3E:
 		{
 			cpu.SetFlags(0, 0, 0, memory.mem[cpu.HL] & 0x01);
-			memory.mem[cpu.HL] >>= 1;
+			//memory.mem[cpu.HL] >>= 1;
+            memory.WriteByte(cpu.HL, memory.mem[cpu.HL]>>1);
             cpu.SetFlagZ(memory.mem[cpu.HL] == 0);
 			break;
 		}
