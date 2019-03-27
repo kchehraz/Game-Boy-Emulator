@@ -41,34 +41,34 @@ BYTE Memory::GetFlagLCDC() {
 }
 
 // Timing flags
-BYTE Memory::GetFlagDIV() {
+BYTE Memory::GetRegDIV() {
     return mem[0xFF04];
 }
 
-BYTE Memory::GetFlagTIMA() {
+BYTE Memory::GetRegTIMA() {
     return mem[0xFF05];
 }
 
-BYTE Memory::GetFlagTMA() {
+BYTE Memory::GetRegTMA() {
     return mem[0xFF06];
 }
 
-BYTE Memory::GetFlagTAC() {
+BYTE Memory::GetRegTAC() {
     return mem[0xFF07];
 }
 
-void Memory::SetFlagDIV(BYTE val) {
+void Memory::SetRegDIV(BYTE val) {
     mem[0xFF04] = val;
 }
 
-void Memory::SetFlagTIMA(BYTE val) {
+void Memory::SetRegTIMA(BYTE val) {
     mem[0xFF05] = val;
 }
 
-void Memory::SetFlagTMA(BYTE val) {
+void Memory::SetRegTMA(BYTE val) {
     mem[0xFF06] = val;
 }
 
-void Memory::SetFlagTAC(BYTE val) {
+void Memory::SetRegTAC(BYTE val) {
     mem[0xFF07] = val;
 }

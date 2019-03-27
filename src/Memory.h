@@ -29,12 +29,12 @@ public:
     BYTE GetFlagLCDC(); // LCD Control
     
     // Timing flags
-    BYTE GetFlagDIV(); // Divider
-    BYTE GetFlagTIMA(); // Counter
-    BYTE GetFlagTMA(); // Modulo
-    BYTE GetFlagTAC(); // Control
-    void SetFlagDIV(BYTE val); // Divider
-    void SetFlagTIMA(BYTE val); // Counter
-    void SetFlagTMA(BYTE val); // Modulo
-    void SetFlagTAC(BYTE val); // Control
+    BYTE GetRegDIV(); // Divider
+    BYTE GetRegTIMA(); // Counter
+    BYTE GetRegTMA(); // Modulo
+    BYTE GetRegTAC(); // Control
+    void SetRegDIV(BYTE val); // Divider
+    void SetRegTIMA(BYTE val); // Counter
+    void SetRegTMA(BYTE val); // Modulo
+    void SetRegTAC(BYTE val); // Control
 };

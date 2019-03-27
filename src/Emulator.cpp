@@ -8,7 +8,9 @@ void debugPrintInfo() {
 
 Emulator::Emulator() {
     cycles = 0;
-
+    timer = 0;
+    timerCounter = 1024; // Initial value is 1024
+    
     isHalted = false;
     interruptsOn = false;
 }
@@ -33,14 +35,16 @@ void Emulator::Update() {
         cyclesThisUpdate += ExecuteOpcode(opcode);
         cycles += cyclesThisUpdate;
         
-        UpdateTimers();
+        UpdateTimers(cyclesThisUpdate);
     }
     UpdateGraphics();
     //RenderScreen();
 }
 
-void Emulator::UpdateTimers() {
-
+void Emulator::UpdateTimers(int cycles) {
+    if (memory.GetRegTAC()) { // Check timer enabled
+        timer += cycles;
+    }
 }
 
 void Emulator::UpdateGraphics() {

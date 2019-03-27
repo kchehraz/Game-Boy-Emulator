@@ -10,6 +10,9 @@ public:
 	BOOL isHalted;
 	BOOL interruptsOn; // Interrupt Master Enable (IME)
 	int cycles;
+    int timer;
+    int clockSpeed;
+    int timerCounter; //
 	//BYTE pixels[144][160]; // 160x144
     BYTE pixels[256][256]; // for debugging
 
@@ -22,7 +25,7 @@ public:
 
 	void Update();
 	void UpdateGraphics();
-    void UpdateTimers();
+    void UpdateTimers(int cycles);
     void RenderTile(int row, int column, int mapBank);
     void RenderSpriteTile(int index);
     void HandleInterrupts();
