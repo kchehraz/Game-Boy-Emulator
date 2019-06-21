@@ -11,7 +11,7 @@ The Game Boy uses the Sharp LR35902, an 8-bit CPU based on the Zilog Z80 and Int
 | ------------- | ------------- |
 | CPU | Implemented (with bugs) |
 | Video | Implemented (with bugs) |
-| Timers | In progress |
+| Timers | Implemented (with bugs) |
 | Interrupts | In progress |
 | Input | Not implemented |
 | Audio | Not implemented |
